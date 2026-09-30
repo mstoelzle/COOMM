@@ -27,7 +27,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.16"
+python = ">=3.10"
 numba = ">=0.61,<1"
 numpy = ">=1.26,<3"
 pyelastica = ">=0.2.2,<2"
