@@ -30,7 +30,7 @@ packages = [
 python = ">=3.10,<3.16"
 numba = ">=0.61,<1"
 numpy = ">=1.26,<3"
-pyelastica = ">=0.3.3.post2,<2"
+pyelastica = ">=0.2.2,<2"
 matplotlib = ">=3.8,<4"
 
 

@@ -910,4 +910,4 @@ markers = {test = "python_version == \"3.10\""}
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.16"
-content-hash = "9a645cc5fd0b7799238b70d5b3630854394893e43a16b636a17e0c3d2deea774"
+content-hash = "28d39d69a094002e47fbab64ab5da8d801fabbb74e3ece1f894b86091b931974"

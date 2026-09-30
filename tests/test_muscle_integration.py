@@ -1,6 +1,7 @@
 """Check muscle loading and recording with real PyElastica rods."""
 
 from collections import defaultdict
+from inspect import Parameter, signature
 
 import numpy as np
 import pytest
@@ -22,6 +23,9 @@ from coomm.actuations.muscles import (
 
 
 def make_rod():
+    # Only 0.2 requires nu; newer versions retain it as a rejected optional argument.
+    nu = signature(CosseratRod.straight_rod).parameters.get("nu")
+    kwargs = {"nu": 0.0} if nu is not None and nu.default is Parameter.empty else {}
     return CosseratRod.straight_rod(
         n_elements=8,
         start=np.zeros(3),
@@ -31,6 +35,8 @@ def make_rod():
         base_radius=0.01,
         density=1000.0,
         youngs_modulus=1.0e6,
+        shear_modulus=1.0e6 / 3.0,
+        **kwargs,
     )
 
 
@@ -112,9 +118,19 @@ def test_muscle_group_short_rollout(recording):
     simulator.finalize()
     initial_position = rod.position_collection.copy()
     stepper = PositionVerlet()
+    advance = getattr(stepper, "step", None)
+    if advance is None:
+        # PyElastica 0.2 uses the original stepping interface.
+        from elastica.timestepper import extend_stepper_interface
+
+        do_step, stages = extend_stepper_interface(stepper, simulator)
+
+        def advance(system, time, dt):
+            return do_step(stepper, stages, system, time, dt)
+
     time = 0.0
     for _ in range(50):
-        time = stepper.step(simulator, time, 1.0e-4)
+        time = advance(simulator, time, 1.0e-4)
     assert time == pytest.approx(0.005)
     assert np.isfinite(rod.position_collection).all()
     assert np.isfinite(rod.velocity_collection).all()
