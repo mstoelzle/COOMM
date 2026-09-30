@@ -22,6 +22,23 @@ git clone https://github.com/hanson-hschang/COOMM
 pip install -e COOMM
 ```
 
+## Supported dependencies and tests
+
+The current package supports Python 3.10–3.15, NumPy 1.26 and 2.x,
+Numba >=0.61, and PyElastica 0.3.3.post2 through 1.x. Dependency resolution
+selects compatible numerical package versions for each Python version.
+
+To run the integration tests from a source checkout:
+
+```bash
+python -m pip install -e . pytest
+MPLBACKEND=Agg python -m pytest -q
+```
+
+`ApplyMuscles` and `ApplyMuscleGroups` accept an omitted or `None`
+`callback_params_list` to disable recording. Passing a list of dictionaries
+retains the existing muscle and group diagnostics.
+
 ## Examples
 
 > Note, all the example cases written uses the original version of COOMM (v.0.0.1), with older version of PyElastica (v.0.2.2). If you are interested in reproducing the result from the paper, please match the version.

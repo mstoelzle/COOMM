@@ -424,14 +424,17 @@ class MuscleGroup(MuscleInfo, ContinuousActuation):
 class ApplyMuscles(ApplyActuations):
     """ApplyMuscles."""
 
-    def __init__(self, muscles: Iterable[Muscle], step_skip: int, callback_params_list: list):
+    def __init__(
+        self, muscles: Iterable[Muscle], step_skip: int, callback_params_list: list | None = None
+    ):
         """__init__.
 
         Parameters
         ----------
         muscles : Iterable[Muscle]
         step_skip : int
-        callback_params_list : list
+        callback_params_list : list, optional
+            Recording dictionaries, or None to disable callback collection.
         """
         super().__init__(muscles, step_skip, callback_params_list)
         for m, muscle in enumerate(muscles):
@@ -466,18 +469,23 @@ class ApplyMuscles(ApplyActuations):
 class ApplyMuscleGroups(ApplyMuscles):
     """ApplyMuscleGroups."""
 
-    def __init__(self, muscle_groups: MuscleGroup, step_skip: int, callback_params_list: list):
+    def __init__(
+        self, muscle_groups: Iterable[MuscleGroup], step_skip: int,
+        callback_params_list: list | None = None,
+    ):
         """__init__.
 
         Parameters
         ----------
-        muscle_groups : MuscleGroup
+        muscle_groups : Iterable[MuscleGroup]
         step_skip : int
-        callback_params_list : list
+        callback_params_list : list, optional
+            Recording dictionaries, or None to disable callback collection.
         """
         super().__init__(muscle_groups, step_skip, callback_params_list)
-        for muscle_group, callback_params in zip(muscle_groups, self.callback_params_list):
-            callback_params["muscles"] = [defaultdict(list) for _ in muscle_group.muscles]
+        if self.callback_params_list is not None:
+            for muscle_group, callback_params in zip(muscle_groups, self.callback_params_list):
+                callback_params["muscles"] = [defaultdict(list) for _ in muscle_group.muscles]
 
     def callback_func(self, muscle_groups: MuscleGroup, callback_params_list: Iterable[Dict]):
         """callback_func.
